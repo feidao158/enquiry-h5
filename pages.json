@@ -189,6 +189,21 @@
 				}
 			}
 		},{
+			"path": "pages/index/confirmOrder",
+			"style": {
+				"navigationBarTitleText": "",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true,
+				"app-plus": {
+				  "titleNView": false,
+				  "bounce": "none",
+				  "pullToRefresh": {
+				    "style": "circle",
+				    "offset": "70px"
+				  }
+				}
+			}
+		},{
 			"path": "pages/index/loginPassword",
 			"style": {
 				"navigationBarTitleText": "",

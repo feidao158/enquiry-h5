@@ -27,7 +27,7 @@
 							<!-- <text @click="typeNameList(item.id,item.typeName)">{{item.typeName}}</text> -->
 						</view>
 						<view class="item-container">
-							<view class="thumb-box" @click="listData(item1.id)" v-for="(item1, index1) in item.materialList" :key="index1">
+							<view class="thumb-box" @click="listData(index,index1)" v-for="(item1, index1) in item.materialList" :key="index1">
 								<view class="listdetil">
 									<view>{{item1.materialName}}</view>
 									<view>{{item1.materialCode}}</view>
@@ -217,12 +217,12 @@
 					url:'./classifyList?id='+id+'&name='+name
 				});
 			},
-			listData(id){
+			listData(index,index1){
 				let _this = this
 				//详情
 				uni.navigateTo({
 					// url: './classifyList?id='+_this.list[index].key
-					url:'./detailsPage?id='+id
+					url:'./detailsPage?id='+JSON.stringify(_this.tabbar[index].materialList[index1])
 				});
 			}
 		}

@@ -34,15 +34,6 @@
 						<!-- <u-swipe-action :show="show" @click="clickswipeaction" @open="open" :options="options1" class="conterBodyCount" v-for="(i,index) in goodsList"> -->
 						<view class="conterBodyCount" v-for="(i,index) in goodsList" :key="index">
 							<view class="conterBodyradio">
-								<!-- <u-checkbox-group :size="size" :width="width" :wrap="wrap" :max="max"
-											@change="checkboxGroupChange" :activeColor="activeColor">
-											<u-checkbox @change="seletedStatus" :checked="checkList.includes(String(i.id))" v-model="i.checked" :shape="shape">
-											</u-checkbox>
-										</u-checkbox-group> -->
-								<!-- <checkbox-group @change="seletedStatus" checked> -->
-								<!-- <checkbox :value="i.name" color="#ff6226" @tap="radioList"  :checked="checkList.includes(String(i.name))"></checkbox> -->
-				
-								<!-- </checkbox-group> -->
 								<label @click='checkeboxclick(index)'>
 									<image src="../../static/uview/example/checkedYse.png" mode="" v-if="i.flag"></image>
 									<image src="../../static/uview/example/checkedNo.png" mode="" v-else></image>
@@ -53,16 +44,17 @@
 								</u-image>
 							</view>
 							<view class="conterBodyTet">
-								<view class="conterBodyTetName">{{i.name}}</view>
-								<view class="conterBodyTetCode">货号：98877</view>
-								<view class="conterBodyTetNum"><text style="color: #ff9901;font-size: 16px;">￥456/箱</text><text
-										style="font-size: 12px;color: #7A7777;margin-left: 20rpx;">24灌 / 箱</text></view>
+								<view class="conterBodyTetName">{{i.materialName}}</view>
+								<view class="conterBodyTetCode">货号：{{i.materialCode}}</view>
+								<view>规格：{{i.standard}}</view>
+								<!-- <view class="conterBodyTetNum"><text style="color: #ff9901;font-size: 16px;">￥456/箱</text><text
+										style="font-size: 12px;color: #7A7777;margin-left: 20rpx;">24灌 / 箱</text></view> -->
 								<view style="height: 25px;">
 									<view class="input-wrap" style="display: flex;">
 										<u-button @click="countreduce(index)"
 											:custom-style="{height: '25px',width:'25px',margin:'0px',padding:'0px'}">-
 										</u-button>
-										<input class="input" @click="statusChange(index)" disabled v-model="i.num" type="text" :value="input" />
+										<input class="input" @click="statusChange(index)" disabled v-model="i.shopCardNumber" type="text" :value="input" />
 										<u-button @click="countAdd(index)"
 											:custom-style="{height: '25px',width:'25px',margin:'0px',padding:'0px'}">+
 										</u-button>
@@ -98,7 +90,7 @@
 					</view>
 					<view class="titleBotmView">合计<text class="titleBotmViewText">￥{{totalPrice.price}}</text></view>
 					<view class="titleBotmView" style="float: right;">
-						<u-button type="warning" size="medium">去下单</u-button>
+						<u-button type="warning" size="medium" @click="confirmOrderPageList">去下单</u-button>
 					</view>
 				</view>
 				<view class="titleBotm" v-else>
@@ -182,64 +174,19 @@
 					disabled: false
 				}],
 				goodsListCount: 10, //库存总数
-				goodsList: [{
-						id: 1,
-						name: '椰浆',
-						value: 'a',
-						num: 2,
-						flag: 0,
-						code: '2343',
-						monery: '22',
-						count: '24',
-						checked: false,
+				goodsList: [
+					// {
+					// 	id: 1,
+					// 	name: '椰浆',
+					// 	value: 'a',
+					// 	num: 2,
+					// 	flag: 0,
+					// 	code: '2343',
+					// 	monery: '22',
+					// 	count: '24',
+					// 	checked: false,
 
-					},
-					{
-						id: 2,
-						name: '椰浆2',
-						code: '33444',
-						value: 'b',
-						num: 3,
-						flag: 1,
-						monery: '228',
-						count: '242',
-						checked: false,
-
-					},{
-						id: 2,
-						name: '椰浆2',
-						code: '33444',
-						value: 'b',
-						num: 3,
-						flag: 1,
-						monery: '228',
-						count: '242',
-						checked: false,
-
-					},{
-						id: 2,
-						name: '椰浆2',
-						code: '33444',
-						value: 'b',
-						num: 3,
-						flag: 1,
-						monery: '228',
-						count: '242',
-						checked: false,
-
-					},
-					{
-						id: 3,
-						name: '椰浆3',
-						code: '888',
-						value: 'c',
-						num: 1,
-						flag: 1,
-						monery: '88',
-						count: '90',
-						checked: false,
-
-					}
+					// }
 				],
 				items: [{
 						value: 'USA',
@@ -266,6 +213,12 @@
 				countPrice: 0
 			};
 		},
+		onShow() {
+			this.shoppingListData()
+		},
+		onLoad() {
+			
+		},
 		computed: {
 			allchecked() {
 				var unms = 0
@@ -285,8 +238,8 @@
 				var price = 0
 				for (var i = 0; i < this.goodsList.length; i++) {
 					if (this.goodsList[i].flag == 1) {
-						num += this.goodsList[i].num
-						price += this.goodsList[i].num * this.goodsList[i].monery
+						num += this.goodsList[i].shopCardNumber
+						price += this.goodsList[i].shopCardNumber * this.goodsList[i].clientRealPrice
 					}
 				}
 				return {
@@ -363,7 +316,7 @@
 			// },
 			countreduce(index) {
 				//购物车--
-				if (this.goodsList[index].num == 1) {
+				if (this.goodsList[index].shopCardNumber == 1) {
 					this.$refs.uToast.show({
 						title: '数量不能小于1',
 						// 如果不传此type参数，默认为default，也可以手动写上 type: 'default'
@@ -373,25 +326,73 @@
 					})
 					return
 				}
-				this.goodsList[index].num--
+				this.goodsList[index].shopCardNumber--
+				let shopCardDetailDTOList = [{
+					materialCode:this.goodsList[index].materialCode,
+					materialNumber:'-1'
+				}]
+				this.$u.post('store-api/v1/store/shop_card/set', {
+					shopCardDetailDTOList
+				}).then(res => {
+					if (res.code == 200) {
+						
+					}else{
+						this.$refs.uToast.show({
+							title: res.message
+						})
+					}
+				})
 			},
 			delShoppingList(){
 				//删除购物车订单
+				let _this = this
 				if (confirm('确定要删除吗？') == true) {
-					this.$refs.uToast.show({
-						title: '删除成功'
+					let materialCodeList = _this.goodsList.filter((goodItem)=>goodItem.flag==1)
+						.map((goodItem)=> {
+							return {
+								materialCode: goodItem.materialCode
+							}
+						} )
+					let shopCardDetailDTOList = {
+						"shopCardDetailDTOList": materialCodeList
+					}
+					_this.$u.post('store-api/v1/store/shop_card/remove', shopCardDetailDTOList).then(res => {
+						if (res.code == 200) {
+							_this.$refs.uToast.show({
+								title: '删除成功'
+							})
+							_this.shoppingListData()
+						}else{
+							_this.$refs.uToast.show({
+								title: res.message
+							})
+						}
 					})
-					return true;
 				} else {
 					return false;
 				}
 			},
 			countAdd(index) {
 				//购物车++
-				if (this.goodsList[index].num > this.goodsListCount) {
-					return
-				}
-				this.goodsList[index].num++
+				// if (this.goodsList[index].shopCardNumber > this.goodsListCount) {
+				// 	return
+				// }
+				this.goodsList[index].shopCardNumber++
+				let shopCardDetailDTOList = [{
+					materialCode:this.goodsList[index].materialCode,
+					materialNumber:'1'
+				}]
+				this.$u.post('store-api/v1/store/shop_card/set', {
+					shopCardDetailDTOList
+				}).then(res => {
+					if (res.code == 200) {
+						
+					}else{
+						this.$refs.uToast.show({
+							title: res.message
+						})
+					}
+				})
 			},
 			checkeboxclick(index) {
 				//单选按钮
@@ -411,10 +412,10 @@
 			},
 			statusChange(index) {
 				//点击件数弹出软键盘
-				this.keyboardValueNum = this.goodsList[index].num
+				this.keyboardValueNum = this.goodsList[index].shopCardNumber
 				this.keyboardShow = true
 				this.listLength = index
-				this.keyboardValue = this.goodsList[index].num.toString()
+				this.keyboardValue = this.goodsList[index].shopCardNumber.toString()
 			},
 			// confirm(e) {
 
@@ -428,38 +429,96 @@
 			valChange(val) {
 				// 将每次按键的值拼接到value变量中，注意+=写法
 				this.keyboardValue += val;
-				this.goodsList[this.listLength].num = this.keyboardValue
+				this.goodsList[this.listLength].shopCardNumber = this.keyboardValue
 			},
 			// 退格键被点击
 			backspace(e) {
 				// 删除value的最后一个字符
 				if(this.keyboardValue.length >=1){
 					this.keyboardValue = this.keyboardValue.substr(0, this.keyboardValue.length - 1);
-					this.goodsList[this.listLength].num = this.keyboardValue
+					this.goodsList[this.listLength].shopCardNumber = this.keyboardValue
 				}
 			},
 			confirmkeyboard(){
 				//软键盘确定
-				console.log(this.keyboardValue)
+				let keyboardValueNums = this.keyboardValue - this.keyboardValueNum
 				if(this.keyboardValue == ''){
-					this.goodsList[this.listLength].num = '1'
+					this.goodsList[this.listLength].shopCardNumber = '1'
 				}else{
-					this.goodsList[this.listLength].num = this.keyboardValue
+					this.goodsList[this.listLength].shopCardNumber = this.keyboardValue
 				}
 				if(parseInt(this.keyboardValue.slice(0,1)) == 0){
-					this.goodsList[this.listLength].num = '1'
+					this.goodsList[this.listLength].shopCardNumber = '1'
 				}
+				let shopCardDetailDTOList = [{
+					materialCode:this.goodsList[this.listLength].materialCode,
+					materialNumber:keyboardValueNums
+				}]
+				this.$u.post('store-api/v1/store/shop_card/set', {
+					shopCardDetailDTOList
+				}).then(res => {
+					if (res.code == 200) {
+						
+					}else{
+						this.$refs.uToast.show({
+							title: res.message
+						})
+					}
+				})
 				
 			},
 			cancelkeyboard(){
 				//软键盘取消
-				this.goodsList[this.listLength].num = this.keyboardValueNum
+				this.goodsList[this.listLength].shopCardNumber = this.keyboardValueNum
 			},
 			goShopping(){
 				//去购物
 				uni.navigateTo({
 					url: 'classifyList'
 				});
+			},
+			confirmOrderPageList(){
+				console.log(this.goodsListFlag = [])
+				let goodsListFlag = []
+				for(var i=0;i<this.goodsList.length;i++){
+					if(this.goodsList[i].flag){
+						goodsListFlag.push(this.goodsList[i])
+					}
+				}
+				console.log(goodsListFlag)
+				if(goodsListFlag == ''){
+					this.$refs.uToast.show({
+						title: '请选择订单'
+					})
+					return
+				}
+				//去下单
+				// uni.navigateTo({
+				// 	url: 'confirmOrder?list='+JSON.stringify(goodsListFlag)
+				// });
+			},
+			shoppingListData(){
+				let _this = this
+				_this.$u.get('stock-api/v1/ishop/store/shop_card/get', {
+					
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						if(res.data == ''){
+							_this.orderListData = true
+						}else{
+							_this.orderListData = false
+						}
+						for(var i=0;i<res.data.length;i++){
+							res.data[i].flag = 1
+						}
+						_this.goodsList = res.data
+					}else{
+						_this.$refs.uToast.show({
+							title: res.message
+						})
+					}
+				})
 			}
 		}
 		

@@ -23,7 +23,7 @@
 				</view>
 			</view>
 			<view v-else>
-				<view class="item" v-for="(res, index) in siteList" :key="res.id">
+				<view class="item" v-for="(res, index) in siteList" :key="res.id" @click="confirmOrderPage(index)">
 					<view class="top">
 						<view class="name">{{ res.username }}</view>
 						<view class="phone">{{ res.phoneNumber }}</view>
@@ -130,9 +130,13 @@
 				},
 				content: '',
 				border: false,
+				navigatorStatus: false
 			}
 		},
-		onLoad() {
+		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
+			if(option.flag) {
+				this.navigatorStatus = true
+			}
 			this.getData();
 		},
 		methods: {
@@ -369,6 +373,15 @@
 				// 	url: './locationAddPage'
 				// });
 				this.addlocationModal = true
+			},
+			confirmOrderPage(index){
+				if(this.navigatorStatus){
+					this.$store.commit('updateAddressInfo',this.siteList[index])
+					
+					uni.navigateBack({
+					    delta: 1
+					});
+				}
 			}
 		}
 	}

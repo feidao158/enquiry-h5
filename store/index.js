@@ -56,7 +56,8 @@ const store = new Vuex.Store({
 				text: '模板',
 				pagePath: '/pages/example/template'
 			}
-		]
+		],
+		addressInfo: {}
 	},
 	mutations: {
 		$uStore(state, payload) {
@@ -78,6 +79,9 @@ const store = new Vuex.Store({
 			}
 			// 保存变量到本地，见顶部函数定义
 			saveLifeData(saveKey, state[saveKey])
+		},
+		updateAddressInfo(state,payload) {
+			state.addressInfo = payload
 		}
 	}
 })
