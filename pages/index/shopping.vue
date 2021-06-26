@@ -482,7 +482,9 @@
 				let goodsListFlag = []
 				for(var i=0;i<this.goodsList.length;i++){
 					if(this.goodsList[i].flag){
-						goodsListFlag.push(this.goodsList[i])
+						let priceNum = this.goodsList[i]
+						priceNum.priceNum = this.goodsList[i].shopCardNumber
+						goodsListFlag.push(priceNum)
 					}
 				}
 				console.log(goodsListFlag)
@@ -493,9 +495,9 @@
 					return
 				}
 				//去下单
-				// uni.navigateTo({
-				// 	url: 'confirmOrder?list='+JSON.stringify(goodsListFlag)
-				// });
+				uni.navigateTo({
+					url: 'confirmOrder?list='+JSON.stringify(goodsListFlag)+'&array=1'
+				});
 			},
 			shoppingListData(){
 				let _this = this

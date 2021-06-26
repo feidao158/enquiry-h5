@@ -72,10 +72,6 @@
 														:custom-style="{height: '25px',width:'25px',margin:'0px',padding:'0px'}">
 														+
 													</u-button>
-													<!-- <u-keyboard :mask="mask" ref="uKeyboard" safe-area-inset-bottom @confirm="confirm"
-														:random="random" :dotEnable="false" :mode="mode" :confirmBtn="true"
-														:cancelBtn="true" :tooltip="tooltip" v-model="show" @change="change"
-														@backspace="backspace"></u-keyboard> -->
 												</view>
 											</view>
 											<!-- <view class="conterBodyTetText">请按1的基数购买</view> -->
@@ -183,7 +179,11 @@
 		},
 		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
 			console.log(JSON.parse(option.list))
-			this.goodsList.push(JSON.parse(option.list))
+			if(option.array){
+				this.goodsList = JSON.parse(option.list)
+			}else{
+				this.goodsList.push(JSON.parse(option.list))
+			}
 			this.addressdefault()
 		},
 		computed:{

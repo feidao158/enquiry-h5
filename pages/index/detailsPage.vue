@@ -133,7 +133,7 @@
 				priceNum.priceNum = _this.num
 				//购买
 				uni.navigateTo({
-					url: 'confirmOrder?list='+JSON.stringify(_this.list)
+					url: 'confirmOrder?list='+JSON.stringify(priceNum)
 				});
 			},
 			countreduce() {
