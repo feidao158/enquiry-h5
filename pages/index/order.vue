@@ -33,7 +33,9 @@
 						<view></view>
 					</view>
 					<view class="showpopupList">
-						<view @click="showpopupListBtn">全部</view>
+						<view @click="showpopupListBtn('')">全部</view>
+						<view @click="showpopupListBtn(1)">已发货</view>
+						<view @click="showpopupListBtn(0)">未发货</view>
 					</view>
 					
 				</u-popup>
@@ -61,7 +63,7 @@
 							</view>
 						</view>
 						<view class="page-box" v-else>
-							<view class="order" @click="orderListPage" v-for="(res, index) in orderList" :key="index">
+							<view class="order" @click="orderListPage(index)" v-for="(res, index) in orderList" :key="index">
 								<view class="top">
 									<view class="left">
 										<u-icon name="home" :size="30" color="rgb(94,94,94)"></u-icon>
@@ -72,14 +74,14 @@
 								</view>
 								<view class="item">
 									<view class="content">
-										<view>
+										<!-- <view>
 											配送方式：<text>{{res.addressInfo}}</text>
 										</view>
 										<view>
 											付款方式：<text>{{res.addressInfo}}</text>
-										</view>
+										</view> -->
 										<view>
-											下单时间：<text>{{res.addressInfo}}</text>
+											下单时间：<text>{{$dataTime(res.createTime)}}</text>
 										</view>
 									</view>
 								</view>
@@ -90,7 +92,7 @@
 										<!-- ￥{{ priceInt(totalPrice(res.goodsList)) }}.
 										<text class="decimal">{{ priceDecimal(totalPrice(res.goodsList)) }}</text> -->
 										￥{{res.inputName}}.
-										<text class="decimal">{{res.inputName}}</text>
+										<text class="decimal">{{res.orderTotalPrice}}</text>
 									</text>
 								</view>
 								<view class="bottom">
@@ -99,8 +101,8 @@
 									</view>
 									<view class="logistics btn">查看物流</view>
 									<view class="exchange btn">卖了换钱</view> -->
-									<view class="" style="margin-left: -10rpx;">运费:<text>{{res.addressInfo}}</text></view>
-									<view class="evaluate btn" style="margin-right: -10rpx;" @click.stop="payone">再买一次</view>
+									<view class="" style="margin-left: -10rpx;">运费:<text>0</text></view>
+									<view class="evaluate btn" style="margin-right: -10rpx;" @click.stop="payone(index)">再买一次</view>
 								</view>
 							</view>
 							<u-loadmore :status="loadStatus[0]" :icon-type="iconType" :load-text="loadText"  bgColor="#f2f2f2"></u-loadmore>
@@ -113,6 +115,8 @@
 </template>
 
 <script>
+	// import Moment from 'moment'
+	// import common from '../../common/common.js'
 	export default {
 		components: {},
 		data() {
@@ -191,6 +195,11 @@
 					loadmore: '加载更多...',
 					loading: '努力加载中...',
 					nomore: '实在没有了'
+				},
+				screenList:{
+					orderstaus:'',
+					beginshowTime:'',
+					endShowTime:''
 				}
 			};
 		},
@@ -227,8 +236,11 @@
 			confirmTopBtn(){
 				//确认
 				this.show = false
-				this.beginshowTimeVal = ''
-				this.endshowTimeVal = ''
+				this.screenList.beginshowTime = this.beginshowTimeVal+' '+'00:00:00'
+				this.screenList.endShowTime = this.endshowTimeVal+' '+'00:00:00'
+				this.orderList = []
+				this.currentCount = 1
+				this.getOrderList(0);
 			},
 			cancelTopBtn(){
 				//取消
@@ -242,17 +254,28 @@
 					url: 'classifyList'
 				});
 			},
-			orderListPage(){
+			orderListPage(index){
 				//跳转到详情
 				uni.navigateTo({
 					// url: './classifyList?id='+_this.list[index].key
-					url:'./orderList?id=1&name=321'
+					url:'./orderList?list='+JSON.stringify(this.orderList[index])
 				});
 			},
-			payone(){
+			payone(index){
 				//再买一次
-				uni.switchTab({
-					url: 'shopping'
+				var orderListData = []
+				for(var i=0;i<this.orderList[index].detailList.length;i++){
+					let orderLists = {}
+					orderLists.baseUnit = this.orderList[index].detailList[i].billUnitName
+					orderLists.materialName = this.orderList[index].detailList[i].puserFullName
+					orderLists.materialCode = this.orderList[index].detailList[i].puserCode
+					orderLists.priceNum = this.orderList[index].detailList[i].puserNumber
+					orderLists.clientRealPrice = this.orderList[index].detailList[i].puserPrice
+					orderLists.standard = this.orderList[index].detailList[i].standard
+					orderListData.push(orderLists)
+				}
+				uni.navigateTo({
+					url:'./confirmOrder?list='+JSON.stringify(orderListData)+'&array=1'
 				});
 			},
 			back() {
@@ -266,11 +289,15 @@
 				console.log(321)
 				this.show = true
 			},
-			showpopupListBtn(){
+			showpopupListBtn(data){
 				this.show = false
 				this.showpopup = false
-				this.beginshowTimeVal = ''
-				this.endshowTimeVal = ''
+				// this.beginshowTimeVal = ''
+				// this.endshowTimeVal = ''
+				this.screenList.orderstaus = data
+				this.orderList = []
+				this.currentCount = 1
+				this.getOrderList(0);
 			},
 			reachBottom() {
 				// 此tab为空数据
@@ -287,20 +314,13 @@
 			getOrderList(idx) {
 				let _this = this
 				let index = _this.$u.random(0, _this.dataList.length - 1);
-				console.log(idx,index)	
-				// for (let i = 0; i < 3; i++) {
-					
-				// 	let data = JSON.parse(JSON.stringify(_this.dataList));
-				// 	// console.log(data)
-				// 	// data.id = _this.$u.guid();	
-				// 	// _this.orderList.push(data);
-				// 	// console.log(_this.orderList[idx])
-				// }
 				_this.$u.get('chain-api/v1/ishop/info/order/query', {
 					page:_this.currentCount,
-					size:'5'
+					size:'5',
+					startDate:_this.screenList.beginshowTime,
+					endDate:_this.screenList.endShowTime,
+					orderStatus:_this.screenList.orderstaus
 				}).then(res => {
-					console.log(res)
 					if (res.code == 200) {
 						if(res.data != ''){
 							for(var i=0;i<res.data.length;i++){
@@ -311,6 +331,12 @@
 							_this.$refs.uToast.show({
 								title: '暂无更多数据'
 							})
+						}
+						
+						if(_this.orderList == ''){
+							_this.orderListData = true
+						}else{
+							_this.orderListData = false
 						}
 					}else{
 						_this.$refs.uToast.show({
@@ -328,7 +354,7 @@
 				// 	price += parseFloat(val.price);
 				// });
 				// return price.toFixed(2);
-			},
+			}
 			// 总件数
 			// totalNum(item) {
 			// 	let num = 0;

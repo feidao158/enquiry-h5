@@ -6,7 +6,11 @@
 		</view>
 		<view class="u-m-t-5">
 			<u-cell-group v-for="(item,index) in list" :key="index">
-				<u-cell-item icon="" :title="item.title" @click="informationLise"></u-cell-item>
+				<view>
+					<u-cell-item icon="" :title="item.title" @click="informationLise(index)">
+						<view>{{item.createTime}}</view>
+					</u-cell-item>
+				</view>
 			</u-cell-group>
 		</view>
 	</view>
@@ -17,17 +21,12 @@
 		data(){
 			return{
 				list:[
-					{
-						title:'订单管理'
-					},
-					{
-						title:'订单管理1'
-					},
-					{
-						title:'订单管理2'
-					}
+					
 				]
 			}
+		},
+		onLoad() {
+			this.informationList()
 		},
 		methods:{
 			back() {
@@ -41,10 +40,29 @@
 				console.log(321)
 				this.show = true
 			},
-			informationLise(){
-				console.log(23)
+			informationLise(index){
+				console.log(23,this.list)
+				// uni.navigateTo({
+				// 	url:'./informationList?list='+JSON.stringify(this.list[index])
+				// })
+				this.$store.commit('updateNoticeInfo',this.list[index])
 				uni.navigateTo({
-					url:'./informationList'
+					url: './informationList'
+				})
+			},
+			informationList(){
+				let _this = this
+				_this.$u.get('chain-api/v1/notice/list', {
+					page:1,
+					size:100
+				}).then(res => {
+					if (res.code == 200) {
+						_this.list =res.data.list
+					}else{
+						_this.$refs.uToast.show({
+							title: res.message
+						})
+					}
 				})
 			}
 		}

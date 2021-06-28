@@ -57,7 +57,8 @@ const store = new Vuex.Store({
 				pagePath: '/pages/example/template'
 			}
 		],
-		addressInfo: {}
+		addressInfo: {},
+		noticeInfo: {}
 	},
 	mutations: {
 		$uStore(state, payload) {
@@ -82,6 +83,9 @@ const store = new Vuex.Store({
 		},
 		updateAddressInfo(state,payload) {
 			state.addressInfo = payload
+		},
+		updateNoticeInfo(state,payload) {
+			state.noticeInfo = payload
 		}
 	}
 })

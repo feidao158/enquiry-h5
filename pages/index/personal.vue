@@ -29,17 +29,8 @@
 				<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="名称:" label-width="150">
 					<u-input :border="border" type="input" disabled v-model="material.name" placeholder=""></u-input>
 				</u-form-item>
-				<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="账号:" label-width="150">
-					<u-input :border="border" type="input" disabled v-model="material.code" placeholder=""></u-input>
-				</u-form-item>
-				<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="邮箱:" label-width="150">
-					<u-input :border="border" type="input" disabled v-model="material.email" placeholder=""></u-input>
-				</u-form-item>
 				<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="电话:" label-width="150">
 					<u-input :border="border" type="input" disabled v-model="material.phone" placeholder=""></u-input>
-				</u-form-item>
-				<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="QQ:" label-width="150">
-					<u-input :border="border" type="input" disabled v-model="material.qq" placeholder=""></u-input>
 				</u-form-item>
 			</u-form>
 		</u-modal>
@@ -54,18 +45,18 @@
 					<u-avatar size="140"></u-avatar>
 				</view>
 				<view class="u-flex-1">
-					<view class="u-font-18 u-p-b-10">uView ui</view>
-					<view class="u-font-14">微信号:helang_uView</view>
+					<view class="u-font-18 u-p-b-10">{{material.name}}</view>
+					<view class="u-font-14">{{material.phone}}</view>
 				</view>
 			</view>
 			<view class="ordertext">
 				<view class='ordertextlist'>
 					<view class='ordertextlisttext'>在途订单数</view>
-					<view class='ordertextlistnum'>1</view>
+					<view class='ordertextlistnum'>{{orderTitleList.shipped}}</view>
 				</view>
 				<view class='ordertextlist' style="border-left: 1px solid #949494;">
-					<view class='ordertextlisttext'>在途订单数</view>
-					<view class='ordertextlistnum'>1</view>
+					<view class='ordertextlisttext'>待发货数量</view>
+					<view class='ordertextlistnum'>{{orderTitleList.unshipped}}</view>
 				</view>
 			</view>
 		</view>
@@ -114,10 +105,11 @@
 				},
 				material:{
 					name:'',
-					code:'',
-					email:'',
 					phone:'',
-					qq:""
+				},
+				orderTitleList:{
+					shipped:'',
+					unshipped:''
 				},
 				materialModal:false,
 				content: '',
@@ -168,6 +160,9 @@
 				}
 			};
 		},
+		onShow() {
+			this.userList()
+		},
 		methods: {
 			setName() {
 				//设置
@@ -196,9 +191,25 @@
 				}
 				if(_this.model.password == _this.model.rePassword){
 					_this.show = false
+					_this.$u.get('rest/editPwd', {
+						oldPassword:_this.model.oldpassword,
+						password:_this.model.password,
+						repassword:_this.model.rePassword
+					}).then(res => {
+						console.log(res)
+						if (res.code == 200) {
+							_this.$refs.uToast.show({
+								title: '修改成功！',
+							})
+						}else{
+							_this.$refs.uToast.show({
+								title: res.message,
+							})
+						}
+					})
 					_this.clearFrom()
 				}else{
-					this.$refs.uToast.show({
+					_this.$refs.uToast.show({
 						title: '两次密码不一致！',
 						// 如果不传此type参数，默认为default，也可以手动写上 type: 'default'
 						// type: 'success', 
@@ -209,15 +220,6 @@
 						_this.$refs.uModal.clearLoading();
 					},1000)
 				}
-				// this.$refs.uForm.validate(valid => {
-				// 	console.log(valid)
-				// 	if (valid) {
-				// 		if(!this.model.agreement) return this.$u.toast('请勾选协议');
-				// 		console.log('验证通过');
-				// 	} else {
-				// 		console.log('验证失败');
-				// 	}
-				// });
 			},
 			modelreturnBtn(){
 				///取消
@@ -248,6 +250,41 @@
 				uni.navigateTo({
 					url: './location'
 				});
+			},
+			userList(){
+				let _this = this
+				_this.$u.get('store-api/v1/basic/storeUser/findById', {
+					
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						_this.material.name = res.data.userLoginName
+						_this.material.phone = res.data.userPhone
+					}else{
+						
+					}
+				})
+				
+				_this.$u.get('chain-api/v1/ishop/info/order/query/number', {
+					typeStatus:0
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						_this.orderTitleList.unshipped = res.data
+					}else{
+						
+					}
+				})
+				_this.$u.get('chain-api/v1/ishop/info/order/query/number', {
+					typeStatus:1
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						_this.orderTitleList.shipped = res.data
+					}else{
+						
+					}
+				})
 			}
 		}
 	}

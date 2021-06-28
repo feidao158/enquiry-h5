@@ -132,6 +132,7 @@
 
 <script>
 	// import uniSwiperAction from '@/uview-ui/components/uni-s'
+	import * as math from "mathjs"
 	export default {
 		data() {
 			return {
@@ -217,7 +218,7 @@
 			this.shoppingListData()
 		},
 		onLoad() {
-			
+			// math.add(math.sqrt(4), 2)
 		},
 		computed: {
 			allchecked() {

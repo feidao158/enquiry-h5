@@ -43,18 +43,19 @@
 	export default {
 		data() {
 			return {
-				list: [{
-						image: '/static/uview/example/inform.png',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
+				list: [
+					// {
+					// 	image: '/static/uview/example/inform.png',
+					// 	title: '昨夜星辰昨夜风，画楼西畔桂堂东'
+					// },
+					// {
+					// 	image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
+					// 	title: '身无彩凤双飞翼，心有灵犀一点通'
+					// },
+					// {
+					// 	image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
+					// 	title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
+					// }
 				],
 				title: false,
 				mode: 'round',
@@ -66,6 +67,9 @@
 					value:''
 				},
 			}
+		},
+		onLoad() {
+			this.carouselList()
 		},
 		onShow(){
 			
@@ -84,10 +88,10 @@
 				this.effect3d = index == 0 ? true : false;
 			},
 			click(index) {
-				this.$refs.uToast.show({
-					title: `点击了第${index + 1}张图片`,
-					type: 'success'
-				})
+				// this.$refs.uToast.show({
+				// 	title: `点击了第${index + 1}张图片`,
+				// 	type: 'success'
+				// })
 			},
 			change(index) {
 				// console.log(index);
@@ -96,7 +100,7 @@
 				//搜索详情
 				uni.navigateTo({
 					// url: './classifyList?id='+_this.list[index].key
-					url:'./classifyList?id=1&name='+this.model.value
+					url:'./classifyList?id=&name='+this.model.value
 				});
 			},
 			informBtn(){
@@ -116,6 +120,25 @@
 				uni.navigateTo({
 					url: 'order'
 				});
+			},
+			carouselList(){
+				this.$u.get('chain-api/v1/carousel/list', {
+					
+				}).then(res => {
+					if (res.code == 200) {
+						let imgData = []
+						for(var i=0;i<res.data.length;i++){
+							let imgDataArray = {}
+							imgDataArray.image = res.data[i].urlInfo
+							imgDataArray.title = res.data[i].title
+							imgData.push(imgDataArray)
+						}
+						this.list = imgData
+					}else{
+						
+						
+					}
+				})
 			}
 		}
 	}

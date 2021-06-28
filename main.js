@@ -22,6 +22,9 @@ Vue.mixin(vuexStore);
 // 引入uView对小程序分享的mixin封装
 let mpShare = require('uview-ui/libs/mixin/mpShare.js');
 Vue.mixin(mpShare);
+import common from './common/common.js'
+
+Vue.prototype.$dataTime = common.dataTime
 
 // i18n部分的配置
 // 引入语言包，注意路径

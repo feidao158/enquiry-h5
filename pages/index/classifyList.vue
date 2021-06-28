@@ -24,17 +24,18 @@
 		</view>
 		<view class="classifyConter" v-else>
 			<view class="classifyConterList" v-for="(item,index) in list" :key="index" @click="classifyConterListBtn(index)">
-				<view v-for="(item1,index1) in item.materialList" :key="index1">
+				<!-- <view v-for="(item1,index1) in item.materialList" :key="index1"> -->
+				<view>
 					<view class="classifyConterListTitle">
-						<view>{{item1.materialName}}</view>
+						<view>{{item.materialName}}</view>
 						<!-- <view class="available" v-if="item1.selfStatus">有</view>
 						<view class="availableFs" v-else>无</view> -->
 					</view>
 					<view class="classifyConterListPrice">
 						货号:
-						<text>{{item1.materialCode}}</text>
-						<text class="classifyConterListPriceye">¥ {{item1.clientRealPrice}} / {{item1.baseUnit}} </text>
-						<text class="classifyConterListPriceno">价格{{item1.clientDisplayPrice}}</text>
+						<text>{{item.materialCode}}</text>
+						<text class="classifyConterListPriceye">¥ {{item.clientRealPrice}} / {{item.baseUnit}} </text>
+						<text class="classifyConterListPriceno">价格{{item.clientDisplayPrice}}</text>
 					</view>
 				</view>
 				
@@ -93,16 +94,16 @@
 			},
 			rightlist() {
 				//点击菜单按钮
-				console.log(321)
 				this.show = true
 			},
 			searchList() {
 				//搜索
 				console.log(31)
+				this.commodityListData('',this.model.value)
 			},
 			classifyConterListBtn(index){
 				uni.navigateTo({
-					url: './detailsPage'
+					url:'./detailsPage?id='+JSON.stringify(this.list[index])
 				});
 			},
 			commodityListData(id,name){
@@ -118,7 +119,15 @@
 						}else{
 							_this.listDataNull = false
 						}
-						_this.list = res.data
+						let listData = []
+						for(var i=0;i<res.data.length;i++){
+							for(var j =0;j<res.data[i].materialList.length;j++){
+								console.log()
+								listData.push(res.data[i].materialList[j])
+							}
+						}
+						console.log(listData)
+						_this.list = listData
 					}else{
 						_this.$refs.uToast.show({
 							title: res.message

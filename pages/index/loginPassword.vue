@@ -1,5 +1,9 @@
 <template>
 	<view class="">
+		<!-- 提示 -->
+		<view>
+			<u-toast ref="uToast" />
+		</view>
 		<view class="example-body">
 			<uni-nav-bar left-icon="arrowleft" right-text="" left-text="" title="重置密码" @clickLeft="back"
 				@clickRight="" />
@@ -12,6 +16,10 @@
 			<u-form-item :label-position="labelPosition" prop="name" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="phone">
 				<u-input :border="border" type="input" v-model="model.name" placeholder="请输入注册时的手机号"></u-input>
 			</u-form-item>
+			<!-- <u-form-item :label-position="labelPosition" prop="code" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="checkmark-circle">
+				<u-input :border="border" placeholder="图形验证码" v-model="model.imgtext" type="text"></u-input>
+				<u-image class="logoimg" width="260rpx" height="76rpx" @click="imgData" :src="model.img"></u-image>
+			</u-form-item> -->
 			<u-form-item :label-position="labelPosition" prop="password" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="lock-open">
 				<u-input :password-icon="true" :border="border" type="password" v-model="model.password" placeholder="请输入密码"></u-input>
 			</u-form-item>
@@ -30,7 +38,6 @@
 			</view>
 		</u-form>
 	</view>
-	
 </template>
 
 <script>
@@ -41,16 +48,28 @@
 					name:'',
 					password:'',
 					code:'',
-					newPassword:''
-					
+					newPassword:'',
+					imgtext:'',
+					img:''
 				},
+				labelPosition: 'left',
+				border: false,
+				toast: ['toast'],
 				rules: {
 					name: [
 						{
 							required: true,
-							message: '请输入姓名',
+							message: '请输入手机号',
 							trigger: 'blur' ,
-						}
+						}, {
+						validator: (rule, value, callback) => {
+							// 调用uView自带的js验证规则，详见：https://www.uviewui.com/js/test.html
+							return this.$u.test.mobile(value);
+						},
+						message: '手机号码不正确',
+						// 触发器可以同时用blur和change，二者之间用英文逗号隔开
+						trigger: ['change', 'blur'],
+					}
 					],
 					password:[
 						{
@@ -90,13 +109,49 @@
 			submit() {
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
-						// if(!this.model.agreement) return this.$u.toast('请勾选协议');
-						console.log('验证通过');
+						this.$u.get('rest/store/forget', {
+							phone:'15101698321',
+							// phoneStatus:1,
+							password:'123456',
+							repass:'123456',
+							smscode:''
+						}).then(res => {
+							console.log(res)
+							if (res.code == 200) {
+								
+							}else{
+								
+							}
+						})
 					} else {
 						console.log('验证失败');
 					}
 				});
 			},
+			//验证码
+			getCode(){
+				console.log()
+				if(this.$u.test.mobile(this.model.name)){
+					this.$u.get('rest/store/forgetSmsVerifyCode', {
+						phone:this.model.name,
+						phoneStatus:1
+					}).then(res => {
+						console.log(res)
+						if (res.code == 200) {
+							
+						}else{
+							
+						}
+					})
+				}else{
+					this.$refs.uToast.show({
+						title: '手机号有误！'
+					})
+				}
+			},
+			imgData(){
+				// this.model.img = 'https://www.oschina.net/action/user/captcha?t='+ new Date().getTime()
+			}
 		}
 	}
 </script>

@@ -5,7 +5,7 @@
 				@clickRight="" />
 		</view>
 		<view class="u-content">
-			<u-parse :html="content"></u-parse>
+			<u-parse :html="noticeInfo.content"></u-parse>
 		</view>
 	</view>
 </template>
@@ -18,6 +18,15 @@
 							<p>露从今夜白，月是故乡明</p>
 							<img src="https://cdn.uviewui.com/uview/swiper/2.jpg" />
 						`
+			}
+		},
+		onLoad(option) {
+			// console.log(JSON.parse(option.list))
+			// this.content = JSON.parse(option.list.content)
+		},
+		computed: {
+			noticeInfo() {
+				return this.$store.state.noticeInfo
 			}
 		},
 		methods: {

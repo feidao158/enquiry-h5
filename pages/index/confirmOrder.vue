@@ -19,7 +19,7 @@
 			<u-picker mode="time" v-model="pickershow" :params="paramsTime" @confirm="confirmOrderTime"></u-picker>
 		</view>
 		<view class="u-m-t-5">
-			<view  style="margin-top: 50px;">
+			<view  style="margin-top: 50px;padding-bottom: 200rpx;">
 				<u-cell-group>
 					<u-cell-item title="订单管理" @click="orderlistSiteBtn" class="orderlistSite">
 						<text>物流</text>
@@ -81,7 +81,7 @@
 							</view>
 				
 						</u-collapse-item>
-						<view class="numList">共1种</view>
+						<view class="numList">共{{goodsList.length}}种</view>
 					</u-collapse>
 				</u-cell-group>
 				<u-cell-group>
@@ -92,11 +92,11 @@
 				<u-cell-group>
 					<u-cell-item title="下单" @click="" ></u-cell-item>
 				</u-cell-group>
-				<u-cell-group>
+				<!-- <u-cell-group>
 					<u-cell-item title="交货时间" @click="deliveryTime"  class="orderlistSite">
 						<text>{{deliveryTimeNum}}</text>
 					</u-cell-item>
-				</u-cell-group>
+				</u-cell-group> -->
 				<u-cell-group>
 					<view class="textareavalview" style="padding: 10px;">
 						<u-input v-model="textareavalue" placeholder="我要留言：" type="textarea" :border="true" />
@@ -104,9 +104,9 @@
 				</u-cell-group>
 				<u-cell-group class="confirmBtn">	
 					<view class="confirmBtnview">
-						<text>共<text style="color:rgb(255, 158, 1) ;">1</text>种商品</text>
+						<text>共<text style="color:rgb(255, 158, 1) ;">{{goodsList.length}}</text>种商品</text>
 						<text>运费<text style="color:rgb(255, 158, 1) ;">￥0</text></text>
-						<text>商品金额<text style="color:rgb(255, 158, 1) ;">￥0</text></text>
+						<text>商品金额<text style="color:rgb(255, 158, 1) ;">￥{{totalPrice.price}}</text></text>
 					</view>
 					<view class="confirmBtnview">
 						<view>
@@ -227,7 +227,14 @@
 				console.log(e)
 			},
 			delList(index){
-				
+				let _this = this
+				if(_this.goodsList.length == 1){
+					_this.$refs.uToast.show({
+						title: '商品不能小于1！'
+					})
+					return
+				}
+				_this.goodsList.splice(index,1)
 			},
 			locationPage(){
 				// 地址管理
@@ -239,27 +246,69 @@
 			confirmOrder(){
 				// debugger
 				let _this = this
+				var goodsListData = []
+				console.log(_this.goodsList)
+				for(var i=0;i<_this.goodsList.length;i++){
+					var confirmListArrty = {}
+					confirmListArrty.puserCode = _this.goodsList[i].materialCode
+					confirmListArrty.puserFullName = _this.goodsList[i].materialName
+					confirmListArrty.billUnitName = _this.goodsList[i].baseUnit
+					confirmListArrty.puserNumber = _this.goodsList[i].priceNum
+					confirmListArrty.standard = _this.goodsList[i].standard
+					goodsListData.push(confirmListArrty)
+				}
 				let requestParam = {
-					remarkInfo:'',
+					remarkInfo:_this.textareavalue,
 					addressInfo:_this.addressInfo.address,
 					addressForUser:_this.addressInfo.username,
 					addressForPhoneNumber:_this.addressInfo.phoneNumber,
-					invoiceStatus:false,
-					detailList:[
-						{
-							puserCode:_this.goodsList[0].materialCode,
-							puserFullName:_this.goodsList[0].materialName,
-							billUnitName:_this.goodsList[0].baseUnit,
-							puserNumber:'1',
-							standard:_this.goodsList[0].standard
-						}
-					]
+					invoiceStatus:_this.isinvoice,
+					detailList:goodsListData
 				}
-				
+				console.log(requestParam,_this.isinvoice)
 				_this.$u.post('chain-api/v1/ishop/info/sale_list/save', requestParam).then(res => {
 					if (res.code == 200) {
-						console.log(res);
+						_this.$refs.uToast.show({
+							title: '下单成功'
+						})
+						_this.confirmDelOrder(goodsListData)//删除购物车
+						setTimeout(function(){
+							uni.switchTab({
+								url: 'home'
+							});
+						},1500)
 						
+					}else{
+						_this.$refs.uToast.show({
+							title: res.message
+						})
+					}
+				})
+			},
+			confirmDelOrder(list){
+				let _this = this
+				console.log(list)
+				var listData = []
+				for(var i=0;i<list.length;i++){
+					let listArray = {}
+					listArray.materialCode = list[i].puserCode
+					listData.push(listArray)
+				}
+				// let materialCodeList = list.filter((goodItem)=>)
+				// 	.map((goodItem)=> {
+				// 		return {
+				// 			materialCode: goodItem.materialCode
+				// 		}
+				// 	} )
+				let shopCardDetailDTOList = {
+					"shopCardDetailDTOList": listData
+				}
+				console.log(shopCardDetailDTOList)
+				_this.$u.post('store-api/v1/store/shop_card/remove', shopCardDetailDTOList).then(res => {
+					if (res.code == 200) {
+						// _this.$refs.uToast.show({
+						// 	title: '删除成功'
+						// })
 					}else{
 						_this.$refs.uToast.show({
 							title: res.message
@@ -271,7 +320,6 @@
 				let _this = this	
 				_this.$u.get('store-api/v1/store/address/default/query', {}).then(res => {
 					if (res.code == 200) {
-						console.log(res);
 						_this.$store.commit('updateAddressInfo',res.data)
 					}else{
 						_this.$refs.uToast.show({

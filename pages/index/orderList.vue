@@ -5,43 +5,35 @@
 			<u-toast ref="uToast" />
 		</view>
 		<view class="example-body">
-			<uni-nav-bar left-icon="arrowleft" right-icon="trash" title="订单详情" @clickLeft="back"
+			<!-- trash 删除图标-->
+			<uni-nav-bar left-icon="arrowleft" right-icon="" title="订单详情" @clickLeft="back"
 				@clickRight="rightlist" />
 		</view>
 		<view class="u-m-t-5">
 			<view class="orderListDetail">
-				<view>订单编号：<text>DHT-20210618-00016</text></view>
+				<view>订单编号：<text>{{list.brandCode}}</text></view>
 			</view>
 			<u-cell-group class="orderListParameter">
-				<view>订单金额：<text style="font-size: 16px;color: red;">￥456.00</text></view>
-				<view>下单时间：<text>2021/6/18 18:12:38</text></view>
-				<view>订单状态：<text style="font-size: 16px;color: rgb(114,202,226);">作废</text></view>
-				<view>下单人：<text>刘维凤-冠军牛</text></view>
+				<view>订单金额：<text style="font-size: 16px;color: red;">￥{{list.orderTotalPrice}}</text></view>
+				<view>下单时间：<text>{{$dataTime(list.createTime)}}</text></view>
+				<view>订单状态：<text style="font-size: 16px;color: rgb(114,202,226);">{{list.orderStatus == 0 ? '未发货':'已发货'}}</text></view>
+				<view>下单人：<text>{{list.addressForUser}}</text></view>
 			</u-cell-group>
 			<view class="orderListDetail">
 				<view>收货信息</view>
 			</view>
 			<u-cell-group class="orderListParameter">
-				<view>刘维凤<text>13082796677</text></view>
-				<view>山东省日照市东港区望海路与丽阳路中段文苑大厦西侧</view>
+				<view>{{list.addressForUser}}<text>{{list.addressForPhoneNumber}}</text></view>
+				<view>{{list.addressInfo}}</view>
 			</u-cell-group>
 			<u-cell-group class="collapseList">
 				<u-collapse style="padding:10px;" :item-style="itemStyle" event-type="close" @change="change">
 					<u-collapse-item @change="itemChange" title="商品清单">
-						<view class="collapseListData">
-							<view>椰浆：<text>06001543</text></view>
-							<view>下单时间：<text>2021/6/18 18:12:38</text></view>
+						<view class="collapseListData" v-for="(item,index) in list.detailList" :key="index">
+							<view>{{item.puserFullName}}：<text>{{item.puserCode}}</text></view>
+							<view>下单时间：<text>{{$dataTime(list.createTime)}}</text></view>
 						</view>
-						<view class="collapseListData">
-							<view>椰浆：<text>06001543</text></view>
-							<view>下单时间：<text>2021/6/18 18:12:38</text></view>
-						</view>
-						<view class="collapseListData">
-							<view>椰浆：<text>06001543</text></view>
-							<view>下单时间：<text>2021/6/18 18:12:38</text></view>
-						</view>
-						
-						<view class="evaluate btn">再买一次</view>
+						<view class="evaluate btn" @click="orderBtnmoney(index)">再买一次</view>
 					</u-collapse-item>
 					<view class="numList">共1种</view>
 				</u-collapse>
@@ -51,6 +43,7 @@
 </template>
 
 <script>
+	import Moment from 'moment'
 	export default {
 		data() {
 			return {
@@ -62,12 +55,12 @@
 				}],
 				itemStyle: {
 					// marginTop: '20px'
-				}
+				},
+				list:{}
 			}
 		},
 		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
-			console.log(option.id); //打印出上个页面传递的参数。
-			console.log(option.name); //打印出上个页面传递的参数。
+			this.list = JSON.parse(option.list)
 		},
 		methods: {
 			back() {
@@ -91,6 +84,22 @@
 			},
 			itemChange(e){
 				console.log(e)
+			},
+			orderBtnmoney(index){
+				var orderListData = []
+				for(var i=0;i<this.list.detailList.length;i++){
+					let orderLists = {}
+					orderLists.baseUnit = this.list.detailList[i].billUnitName
+					orderLists.materialName = this.list.detailList[i].puserFullName
+					orderLists.materialCode = this.list.detailList[i].puserCode
+					orderLists.priceNum = this.list.detailList[i].puserNumber
+					orderLists.clientRealPrice = this.list.detailList[i].puserPrice
+					orderLists.standard = this.list.detailList[i].standard
+					orderListData.push(orderLists)
+				}
+				uni.navigateTo({
+					url:'./confirmOrder?list='+JSON.stringify(orderListData)+'&array=1'
+				});
 			}
 		}
 	}
