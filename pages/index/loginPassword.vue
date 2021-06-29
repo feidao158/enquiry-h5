@@ -124,12 +124,6 @@
 							}else{
 								
 							}
-						}).catch(res=>{
-							if(res.statusCode == 401){
-								uni.reLaunch({
-									url: 'login'
-								});
-							}
 						})
 					} else {
 						console.log('验证失败');
@@ -166,13 +160,6 @@
 							},1000)
 						}else{
 							console.log(321)
-						}
-					}).catch(res=>{
-						console.log(321)
-						if(res.statusCode == 401){
-							uni.reLaunch({
-								url: 'login'
-							});
 						}
 					})
 				}else{

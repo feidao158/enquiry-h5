@@ -15,6 +15,7 @@ Vue.use(uView);
 // 此处为演示vuex使用，非uView的功能部分
 import store from '@/store';
 
+//计算加减乘除
 import * as math from "mathjs"
 Vue.prototype.$math = math
 

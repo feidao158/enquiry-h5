@@ -9,7 +9,7 @@ const install = (Vue, vm) => {
 		// dataType: 'json',
 		// 如果将此值设置为true，拦截回调中将会返回服务端返回的所有数据response，而不是response.data
 		// 设置为true后，就需要在this.$u.http.interceptor.response进行多一次的判断，请打印查看具体值
-		// originalData: true, 
+		originalData: true, 
 		// 设置自定义头部content-type
 		// header: {
 		// 	'content-type': 'xxx'
@@ -35,18 +35,27 @@ const install = (Vue, vm) => {
 	}
 	// 响应拦截，判断状态码是否通过
 	Vue.prototype.$u.http.interceptor.response = (res) => {
-		// 如果把originalData设置为了true，这里得到将会是服务器返回的所有的原始数据
-		// 判断可能变成了res.statueCode，或者res.data.code之类的，请打印查看结果
-		if(res.code == 0) {
-			// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
-			return res;  
-		}else if(res.code == 200){
-			// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
-			return res;  
-		} else{
-			 return false;
+		// console.log(res,321,Vue.prototype.$u)
+		if(res.statusCode == 401){
+			uni.reLaunch({
+			    url: 'login'
+			});
+		}else if(res.statusCode == 200){
+			// 如果把originalData设置为了true，这里得到将会是服务器返回的所有的原始数据
+			// 判断可能变成了res.statueCode，或者res.data.code之类的，请打印查看结果
+			if(res.data.code == 0) {
+				// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
+				return res.data;  
+			}else if(res.data.code == 200){
+				// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
+				return res.data;  
+			} else{
+				 return false;
+			}
 		}
+		
 	}
+	
 }
 
 export default {

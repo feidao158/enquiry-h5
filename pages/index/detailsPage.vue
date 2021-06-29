@@ -125,12 +125,6 @@
 							title: res.message
 						})
 					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
 				})
 			},
 			purchaseBtn(){
@@ -219,12 +213,6 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
-					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
 					}
 				})
 			}

@@ -283,12 +283,6 @@
 							title: res.message
 						})
 					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
 				})
 			},
 			confirmDelOrder(list){
@@ -320,12 +314,6 @@
 							title: res.message
 						})
 					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
 				})
 			},
 			addressdefault(){
@@ -337,12 +325,6 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
-					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
 					}
 				})
 			},
@@ -433,12 +415,6 @@
 						this.$refs.uToast.show({
 							title: res.message
 						})
-					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
 					}
 				})
 				

@@ -186,13 +186,7 @@
 								title: res.message
 							})
 						}
-					}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
-				})
+					})
 					return true;
 				} else {
 					return false;
@@ -258,12 +252,6 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
-					}
-				}).catch(res => {
-					if (res.statusCode == 401) {
-						uni.reLaunch({
-							url: 'login'
-						});
 					}
 				})
 			},
@@ -332,12 +320,6 @@
 							title: res.message
 						})
 					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
 				})
 			},
 			locationModalcancel() {
@@ -379,12 +361,6 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
-					}
-				}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
 					}
 				})
 			},

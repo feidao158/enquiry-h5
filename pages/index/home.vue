@@ -141,12 +141,11 @@
 						
 					}
 				}).catch(res=>{
-					console.log(res.statusCode)
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
+					// if(res.statusCode == 401){
+					// 	uni.reLaunch({
+					// 	    url: 'login'
+					// 	});
+					// }
 				})
 			}
 		}
