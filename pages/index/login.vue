@@ -25,7 +25,7 @@
 					<u-button slot="right" type="success" size="mini" @click="getCode">{{codeTips}}</u-button>
 				</u-form-item> -->
 				<view class="" style="width: 100%;height: 80rpx;margin-top: 20rpx;">
-					<!-- <view style="float: right;color: #029789;" @click="passwordPage">忘记密码?</view> -->
+					<view style="float: right;color: #029789;" @click="passwordPage">忘记密码?</view>
 				</view>
 				<view>
 					<u-button @click="submit" type="error">登录</u-button>

@@ -195,7 +195,7 @@
 				var price = 0
 				for (var i = 0; i < this.goodsList.length; i++) {
 					num += this.goodsList[i].priceNum
-					price += this.goodsList[i].priceNum * this.goodsList[i].clientRealPrice
+					price += this.$math.multiply(this.goodsList[i].priceNum , this.goodsList[i].clientRealPrice)
 				}
 				return {
 					num,
@@ -283,6 +283,12 @@
 							title: res.message
 						})
 					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
 				})
 			},
 			confirmDelOrder(list){
@@ -314,6 +320,12 @@
 							title: res.message
 						})
 					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
 				})
 			},
 			addressdefault(){
@@ -325,6 +337,12 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
+					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 			},
@@ -415,6 +433,12 @@
 						this.$refs.uToast.show({
 							title: res.message
 						})
+					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 				

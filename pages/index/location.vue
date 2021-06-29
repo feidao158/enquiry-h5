@@ -40,7 +40,7 @@
 						</view>
 					</view>
 				</view>
-				
+
 			</view>
 			<u-modal v-model="locationModal" title="编辑地址" @confirm="locationModalconfirm" @cancel="locationModalcancel"
 				:show-cancel-button='true' :content="content">
@@ -61,15 +61,16 @@
 					<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="">
 						<u-input :border="border" type="input" v-model="location.location" placeholder="地址"></u-input>
 					</u-form-item>
-					<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="默认地址" prop="remember" label-width="150">
+					<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="默认地址" prop="remember"
+						label-width="150">
 						<u-switch v-model="location.remember" slot="right"></u-switch>
 					</u-form-item>
 				</u-form>
 				<u-picker mode="region" v-model="pickershow" :defaultRegion="defaultRegion" @confirm="confirmlocation"
 					:range-key="rangKey"></u-picker>
 			</u-modal>
-			<u-modal v-model="addlocationModal" title="新增地址" @confirm="addlocationModalconfirm" @cancel="addlocationModalcancel"
-				:show-cancel-button='true' :content="content">
+			<u-modal v-model="addlocationModal" title="新增地址" @confirm="addlocationModalconfirm"
+				@cancel="addlocationModalcancel" :show-cancel-button='true' :content="content">
 				<u-form :model="addlocation" ref="adduForm">
 					<u-form-item style="padding: 5px 10px;">
 						<view class="u-config-item">
@@ -85,14 +86,16 @@
 						<u-input :border="border" type="input" v-model="addlocation.phone" placeholder="联系电话"></u-input>
 					</u-form-item>
 					<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="">
-						<u-input :border="border" type="input" v-model="addlocation.location" placeholder="详细地址"></u-input>
+						<u-input :border="border" type="input" v-model="addlocation.location" placeholder="详细地址">
+						</u-input>
 					</u-form-item>
-					<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="默认地址" prop="remember" label-width="150">
+					<u-form-item style="padding: 5px 10px;" :label-position="labelPosition" label="默认地址" prop="remember"
+						label-width="150">
 						<u-switch v-model="addlocation.remember" slot="right"></u-switch>
 					</u-form-item>
 				</u-form>
-				<u-picker mode="region" v-model="addpickershow" :defaultRegion="adddefaultRegion" @confirm="addconfirmlocation"
-					:range-key="rangKey"></u-picker>
+				<u-picker mode="region" v-model="addpickershow" :defaultRegion="adddefaultRegion"
+					@confirm="addconfirmlocation" :range-key="rangKey"></u-picker>
 			</u-modal>
 		</view>
 	</view>
@@ -103,11 +106,11 @@
 	export default {
 		data() {
 			return {
-				locationData:false,
+				locationData: false,
 				siteList: [],
 				locationModal: false,
 				pickershow: false,
-				addlocationModal:false,
+				addlocationModal: false,
 				addpickershow: false,
 				rangKey: 'name',
 				defaultRegion: ['广东省', '深圳市', '宝安区'],
@@ -118,15 +121,15 @@
 					phone: '',
 					location: '',
 					city: '',
-					remember:false,
-					id:''
+					remember: false,
+					id: ''
 				},
 				addlocation: {
 					name: '',
 					phone: '',
 					location: '',
 					city: '',
-					remember:false
+					remember: false
 				},
 				content: '',
 				border: false,
@@ -134,7 +137,7 @@
 			}
 		},
 		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
-			if(option.flag) {
+			if (option.flag) {
 				this.navigatorStatus = true
 			}
 			this.getData();
@@ -151,15 +154,15 @@
 				this.locationModal = true
 				this.defaultRegion = this.siteList[index].address.split(' ')[0].split('-')
 				let citys = this.siteList[index].address.split(' ')[0].split('-')
-				this.location.city = citys[0]+'-'+citys[1]+'-'+citys[2]
+				this.location.city = citys[0] + '-' + citys[1] + '-' + citys[2]
 				this.location.name = this.siteList[index].username
 				this.location.phone = this.siteList[index].phoneNumber
 				this.location.id = this.siteList[index].id
 				this.location.location = this.siteList[index].address.split(' ')[1]
 				let remember = false
-				if(this.siteList[index].defaultStatus == 1){
+				if (this.siteList[index].defaultStatus == 1) {
 					remember = true
-				}else{
+				} else {
 					remember = false
 				}
 				this.location.remember = remember
@@ -169,7 +172,7 @@
 				let _this = this
 				if (confirm('确定要删除吗？') == true) {
 					_this.$u.get('store-api/v1/store/address/delete', {
-						id:_this.siteList[index].id
+						id: _this.siteList[index].id
 					}).then(res => {
 						console.log(res)
 						if (res.code == 200) {
@@ -178,12 +181,18 @@
 								title: '删除成功'
 							})
 							_this.getData();
-						}else{
+						} else {
 							_this.$refs.uToast.show({
 								title: res.message
 							})
 						}
-					})
+					}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
+				})
 					return true;
 				} else {
 					return false;
@@ -192,114 +201,118 @@
 			locationModalconfirm() {
 				//确定
 				let _this = this
-					_this.locationModal = true//打开模态框
-					if(_this.location.city == ''){
-						_this.$refs.uToast.show({
-							title: '请选择城市'
-						})
-						return
-					}
-					if(_this.location.name == ''){
-						_this.$refs.uToast.show({
-							title: '请输入联系人'
-						})
-						return
-					}
-					if(_this.location.phone == ''){
-						_this.$refs.uToast.show({
-							title: '请输入手机号'
-						})
-						return
-					}
-					let phoneCheckResult = commonUtils.checkPhone(_this.location.phone)
-					if(!phoneCheckResult) {
-						_this.$refs.uToast.show({
-							title: '请输入合法手机号'
-						})
-						return
-					}
-					if(_this.location.location == ''){
-						_this.$refs.uToast.show({
-							title: '请输入详细地址'
-						})
-						return
-					}
-					let location = 0
-					if(_this.location.remember){
-						location = 1
-					}else{
-						location = 0
-					}
-					_this.$u.post('store-api/v1/store/address/save', {
-						address:_this.location.city+' '+_this.location.location,
-						username:_this.location.name,
-						phoneNumber:_this.location.phone,
-						id:_this.location.id,
-						defaultStatus:location
-					}).then(res => {
-						console.log(res)
-						if (res.code == 200) {
-							console.log(res);
-							_this.$refs.uToast.show({
-								title: '编辑成功'
-							})
-							this.locationModal = false//打开模态框
-							_this.getData();
-						}else{
-							_this.$refs.uToast.show({
-								title: res.message
-							})
-						}
-					}).catch(res => {
-						console.log(res,)
-					});
-			},
-			addlocationModalconfirm() {
-				//新增确定
-				let _this = this
-				_this.addlocationModal = true//打开模态框
-				if(_this.addlocation.city == ''){
+				_this.locationModal = true //打开模态框
+				if (_this.location.city == '') {
 					_this.$refs.uToast.show({
 						title: '请选择城市'
 					})
 					return
 				}
-				if(_this.addlocation.name == ''){
+				if (_this.location.name == '') {
 					_this.$refs.uToast.show({
 						title: '请输入联系人'
 					})
 					return
 				}
-				if(_this.addlocation.phone == ''){
+				if (_this.location.phone == '') {
+					_this.$refs.uToast.show({
+						title: '请输入手机号'
+					})
+					return
+				}
+				let phoneCheckResult = commonUtils.checkPhone(_this.location.phone)
+				if (!phoneCheckResult) {
+					_this.$refs.uToast.show({
+						title: '请输入合法手机号'
+					})
+					return
+				}
+				if (_this.location.location == '') {
+					_this.$refs.uToast.show({
+						title: '请输入详细地址'
+					})
+					return
+				}
+				let location = 0
+				if (_this.location.remember) {
+					location = 1
+				} else {
+					location = 0
+				}
+				_this.$u.post('store-api/v1/store/address/save', {
+					address: _this.location.city + ' ' + _this.location.location,
+					username: _this.location.name,
+					phoneNumber: _this.location.phone,
+					id: _this.location.id,
+					defaultStatus: location
+				}).then(res => {
+					console.log(res)
+					if (res.code == 200) {
+						console.log(res);
+						_this.$refs.uToast.show({
+							title: '编辑成功'
+						})
+						this.locationModal = false //打开模态框
+						_this.getData();
+					} else {
+						_this.$refs.uToast.show({
+							title: res.message
+						})
+					}
+				}).catch(res => {
+					if (res.statusCode == 401) {
+						uni.reLaunch({
+							url: 'login'
+						});
+					}
+				})
+			},
+			addlocationModalconfirm() {
+				//新增确定
+				let _this = this
+				_this.addlocationModal = true //打开模态框
+				if (_this.addlocation.city == '') {
+					_this.$refs.uToast.show({
+						title: '请选择城市'
+					})
+					return
+				}
+				if (_this.addlocation.name == '') {
+					_this.$refs.uToast.show({
+						title: '请输入联系人'
+					})
+					return
+				}
+				if (_this.addlocation.phone == '') {
 					_this.$refs.uToast.show({
 						title: '请输入手机号'
 					})
 					return
 				}
 				let phoneCheckResult = commonUtils.checkPhone(_this.addlocation.phone)
-				if(!phoneCheckResult) {
+				if (!phoneCheckResult) {
 					_this.$refs.uToast.show({
 						title: '请输入合法手机号'
 					})
 					return
 				}
-				if(_this.addlocation.location == ''){
+				if (_this.addlocation.location == '') {
 					_this.$refs.uToast.show({
 						title: '请输入详细地址'
 					})
 					return
 				}
 				let addlocation = 0
-				if(_this.addlocation.remember){
+				if (_this.addlocation.remember) {
 					addlocation = 1
-				}else{
+				} else {
 					addlocation = 0
 				}
 				_this.$u.post('store-api/v1/store/address/save', {
-					address:_this.addlocation.city+' '+_this.addlocation.location,
-					username:_this.addlocation.name,
-					phoneNumber:_this.addlocation.phone,
-					defaultStatus:addlocation
+					address: _this.addlocation.city + ' ' + _this.addlocation.location,
+					username: _this.addlocation.name,
+					phoneNumber: _this.addlocation.phone,
+					defaultStatus: addlocation
 				}).then(res => {
 					console.log(res)
 					if (res.code == 200) {
@@ -307,66 +320,73 @@
 						_this.$refs.uToast.show({
 							title: '新增成功'
 						})
-						this.addlocationModal = false//关闭模态框
+						this.addlocationModal = false //关闭模态框
 						_this.getData();
 						_this.addlocation.name = ''
 						_this.addlocation.phone = ''
 						_this.addlocation.location = ''
 						_this.addlocation.city = ''
 						_this.addlocation.remember = false
-					}else{
+					} else {
 						_this.$refs.uToast.show({
 							title: res.message
 						})
 					}
-				}).catch(res => {
-					console.log(res,)
-				});
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
+				})
 			},
 			locationModalcancel() {
 				//取消
 			},
-			addlocationModalcancel(){
+			addlocationModalcancel() {
 				//新增取消
 			},
 			defaultRegionChange(index) {
 				// this.defaultRegion = index == 0 ? ['广东省', '深圳市', '宝安区'] : ['海南省', '三亚市', '海棠区'];
 				this.pickershow = true;
 			},
-			adddefaultRegionChange(){
-					this.addpickershow = true;
+			adddefaultRegionChange() {
+				this.addpickershow = true;
 			},
-			confirmlocation(e){
-				this.location.city = e.province.label+'-'+e.city.label+'-'+e.area.label
+			confirmlocation(e) {
+				this.location.city = e.province.label + '-' + e.city.label + '-' + e.area.label
 				this.defaultRegion = this.location.city.split('-')
 			},
-			addconfirmlocation(e){
-				this.addlocation.city = e.province.label+'-'+e.city.label+'-'+e.area.label
+			addconfirmlocation(e) {
+				this.addlocation.city = e.province.label + '-' + e.city.label + '-' + e.area.label
 				this.adddefaultRegion = this.addlocation.city.split('-')
 			},
 			getData() {
-				console.log(321)
 				let _this = this
 				_this.$u.get('store-api/v1/store/address/list', {
-					
+
 				}).then(res => {
-					console.log(res,'store-api/v1/store/add')
+					console.log(res, 'store-api/v1/store/add')
 					if (res.code == 200) {
 						console.log(res);
 						_this.siteList = res.data
-						if(res.data == ''){
+						if (res.data == '') {
 							_this.locationData = true
-						}else{
+						} else {
 							_this.locationData = false
 						}
-					}else{
+					} else {
 						_this.$refs.uToast.show({
 							title: res.message
 						})
 					}
-				}).catch(res => {
-					console.log(res)
-				});
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
+				})
 			},
 			toAddSite() {
 				// uni.navigateTo({
@@ -374,12 +394,11 @@
 				// });
 				this.addlocationModal = true
 			},
-			confirmOrderPage(index){
-				if(this.navigatorStatus){
-					this.$store.commit('updateAddressInfo',this.siteList[index])
-					
+			confirmOrderPage(index) {
+				if (this.navigatorStatus) {
+					this.$store.commit('updateAddressInfo', this.siteList[index])
 					uni.navigateBack({
-					    delta: 1
+						delta: 1
 					});
 				}
 			}
@@ -460,24 +479,25 @@
 			}
 		}
 	}
+
 	.centre {
 		text-align: center;
 		padding: 200rpx 0;
 		font-size: 32rpx;
-	
+
 		image {
 			width: 164rpx;
 			height: 164rpx;
 			border-radius: 50%;
 			margin-bottom: 20rpx;
 		}
-	
+
 		.tips {
 			font-size: 24rpx;
 			color: #999999;
 			margin-top: 20rpx;
 		}
-	
+
 		.btn {
 			margin: 80rpx auto;
 			width: 200rpx;

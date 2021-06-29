@@ -121,10 +121,12 @@
 					url: 'order'
 				});
 			},
+			//轮播图
 			carouselList(){
 				this.$u.get('chain-api/v1/carousel/list', {
 					
 				}).then(res => {
+					// console.log(res.statusCode)
 					if (res.code == 200) {
 						let imgData = []
 						for(var i=0;i<res.data.length;i++){
@@ -137,6 +139,13 @@
 					}else{
 						
 						
+					}
+				}).catch(res=>{
+					console.log(res.statusCode)
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 			}

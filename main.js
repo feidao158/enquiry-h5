@@ -15,6 +15,9 @@ Vue.use(uView);
 // 此处为演示vuex使用，非uView的功能部分
 import store from '@/store';
 
+import * as math from "mathjs"
+Vue.prototype.$math = math
+
 // 引入uView提供的对vuex的简写法文件
 let vuexStore = require('@/store/$u.mixin.js');
 Vue.mixin(vuexStore);

@@ -28,7 +28,6 @@ const install = (Vue, vm) => {
 		// 方式四，如果token放在了Storage本地存储中，拦截是每次请求都执行的，所以哪怕您重新登录修改了Storage，下一次的请求将会是最新值
 		const token = uni.getStorageSync('token');
 		config.header.authorization = token;
-		
 		return config; 
 	}
 	// 响应拦截，判断状态码是否通过
@@ -41,7 +40,9 @@ const install = (Vue, vm) => {
 		}else if(res.code == 200){
 			// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
 			return res;  
-		} else return false;
+		} else{
+			 return false;
+		}
 	}
 }
 

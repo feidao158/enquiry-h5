@@ -33,7 +33,7 @@
 							<view>{{item.puserFullName}}：<text>{{item.puserCode}}</text></view>
 							<view>下单时间：<text>{{$dataTime(list.createTime)}}</text></view>
 						</view>
-						<view class="evaluate btn" @click="orderBtnmoney(index)">再买一次</view>
+						<view class="evaluate btn" @click="orderBtnmoney">再买一次</view>
 					</u-collapse-item>
 					<view class="numList">共1种</view>
 				</u-collapse>
@@ -85,7 +85,7 @@
 			itemChange(e){
 				console.log(e)
 			},
-			orderBtnmoney(index){
+			orderBtnmoney(){
 				var orderListData = []
 				for(var i=0;i<this.list.detailList.length;i++){
 					let orderLists = {}

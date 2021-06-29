@@ -12,14 +12,14 @@
 			<view>要货通系统</view>
 			<view style="font-weight: 300;color: #999;font-size: 14px;margin-top: 20rpx;">找回密码</view>
 		</view>
-		<u-form style="padding: 40rpx;margin-top: 20rpx;" :model="model" :rules="rules" ref="uForm" errorType="toast">
+		<u-form style="padding: 40rpx;margin-top: 20rpx;" :model="model" :rules="rules" ref="uForm" :errorType="toast">
 			<u-form-item :label-position="labelPosition" prop="name" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="phone">
 				<u-input :border="border" type="input" v-model="model.name" placeholder="请输入注册时的手机号"></u-input>
 			</u-form-item>
-			<!-- <u-form-item :label-position="labelPosition" prop="code" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="checkmark-circle">
+			<u-form-item :label-position="labelPosition" prop="code" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="checkmark-circle">
 				<u-input :border="border" placeholder="图形验证码" v-model="model.imgtext" type="text"></u-input>
 				<u-image class="logoimg" width="260rpx" height="76rpx" @click="imgData" :src="model.img"></u-image>
-			</u-form-item> -->
+			</u-form-item>
 			<u-form-item :label-position="labelPosition" prop="password" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="lock-open">
 				<u-input :password-icon="true" :border="border" type="password" v-model="model.password" placeholder="请输入密码"></u-input>
 			</u-form-item>
@@ -28,7 +28,7 @@
 			</u-form-item>
 			<u-form-item :label-position="labelPosition" prop="code" :leftIconStyle="{color: '#888', fontSize: '32rpx'}" left-icon="checkmark-circle">
 				<u-input :border="border" placeholder="验证码" v-model="model.code" type="text"></u-input>
-				<u-button slot="right" type="success" size="mini" @click="getCode">{{codeTips}}</u-button>
+				<u-button slot="right" type="success" size="mini" :disabled="disabledCode" @click="getCode">{{codeTips}}</u-button>
 			</u-form-item>
 			<!-- <view class="" style="width: 100%;height: 80rpx;margin-top: 20rpx;">
 				<view style="float: right;color: #029789;">忘记密码?</view>
@@ -50,8 +50,10 @@
 					code:'',
 					newPassword:'',
 					imgtext:'',
-					img:''
+					img:'http://192.168.18.101:8893/rest/store/captcha',
 				},
+				disabledCode:false,
+				dateTime :new Date().getTime(),
 				labelPosition: 'left',
 				border: false,
 				toast: ['toast'],
@@ -110,11 +112,11 @@
 				this.$refs.uForm.validate(valid => {
 					if (valid) {
 						this.$u.get('rest/store/forget', {
-							phone:'15101698321',
-							// phoneStatus:1,
-							password:'123456',
-							repass:'123456',
-							smscode:''
+							phone:this.model.phone,
+							password:this.model.password,
+							repass:this.model.newPassword,
+							smscode:this.model.code,
+							code:_this.model.imgtext
 						}).then(res => {
 							console.log(res)
 							if (res.code == 200) {
@@ -122,7 +124,13 @@
 							}else{
 								
 							}
-						})
+						}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
+				})
 					} else {
 						console.log('验证失败');
 					}
@@ -130,17 +138,41 @@
 			},
 			//验证码
 			getCode(){
-				console.log()
-				if(this.$u.test.mobile(this.model.name)){
-					this.$u.get('rest/store/forgetSmsVerifyCode', {
-						phone:this.model.name,
-						phoneStatus:1
+				let _this = this
+				console.log(_this.dateTime)
+				if(_this.$u.test.mobile(_this.model.name)){
+					_this.$u.get('rest/store/new/forgetSmsVerifyCode', {
+						phone:_this.model.name,
+						code:_this.model.imgtext,
+						uid:_this.dateTime
 					}).then(res => {
 						console.log(res)
-						if (res.code == 200) {
-							
+						if (res.code == 1001) {
+							_this.$refs.uToast.show({
+								title: res.message
+							})
+							_this.disabledCode = true
+							let time = 6
+							console.log(time)
+							let timeOut = setInterval(function(){
+								time -- 
+								_this.codeTips = time+'获取验证码'
+								console.log(time)
+								if(time == 0){
+									clearInterval(timeOut)
+									_this.codeTips = '获取验证码'
+									_this.disabledCode = false
+								}
+							},1000)
 						}else{
-							
+							console.log(321)
+						}
+					}).catch(res=>{
+						console.log(321)
+						if(res.statusCode == 401){
+							uni.reLaunch({
+								url: 'login'
+							});
 						}
 					})
 				}else{
@@ -149,8 +181,11 @@
 					})
 				}
 			},
+			//获取图片验证码
 			imgData(){
-				// this.model.img = 'https://www.oschina.net/action/user/captcha?t='+ new Date().getTime()
+				let _this = this
+				let images = 'http://192.168.18.101:8893/rest/store/captcha?uid='+_this.dateTime
+				_this.model.img = images
 			}
 		}
 	}

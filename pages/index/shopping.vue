@@ -131,8 +131,8 @@
 </template>
 
 <script>
+	// import * as math from "mathjs"
 	// import uniSwiperAction from '@/uview-ui/components/uni-s'
-	import * as math from "mathjs"
 	export default {
 		data() {
 			return {
@@ -218,7 +218,8 @@
 			this.shoppingListData()
 		},
 		onLoad() {
-			// math.add(math.sqrt(4), 2)
+			// math.add	(22, 2)
+			// console.log(this.$math.multiply(2,4))
 		},
 		computed: {
 			allchecked() {
@@ -240,7 +241,7 @@
 				for (var i = 0; i < this.goodsList.length; i++) {
 					if (this.goodsList[i].flag == 1) {
 						num += this.goodsList[i].shopCardNumber
-						price += this.goodsList[i].shopCardNumber * this.goodsList[i].clientRealPrice
+						price += this.$math.multiply(this.goodsList[i].shopCardNumber , this.goodsList[i].clientRealPrice)
 					}
 				}
 				return {

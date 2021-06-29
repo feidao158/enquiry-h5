@@ -85,7 +85,7 @@
 				// 		price += this.goodsList[i].num * this.goodsList[i].monery
 				// 	}
 				// }
-				price += this.num * this.list.clientRealPrice
+				price += this.$math.multiply(this.num , this.list.clientRealPrice)
 				return {
 					num,
 					price
@@ -124,6 +124,12 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
+					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 			},
@@ -213,6 +219,12 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
+					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 			}

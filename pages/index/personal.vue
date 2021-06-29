@@ -206,7 +206,13 @@
 								title: res.message,
 							})
 						}
-					})
+					}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
+				})
 					_this.clearFrom()
 				}else{
 					_this.$refs.uToast.show({
@@ -263,6 +269,12 @@
 					}else{
 						
 					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
 				})
 				
 				_this.$u.get('chain-api/v1/ishop/info/order/query/number', {
@@ -274,6 +286,12 @@
 					}else{
 						
 					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
+					}
 				})
 				_this.$u.get('chain-api/v1/ishop/info/order/query/number', {
 					typeStatus:1
@@ -283,6 +301,12 @@
 						_this.orderTitleList.shipped = res.data
 					}else{
 						
+					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 			}
