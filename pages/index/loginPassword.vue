@@ -125,12 +125,12 @@
 								
 							}
 						}).catch(res=>{
-					if(res.statusCode == 401){
-						uni.reLaunch({
-						    url: 'login'
-						});
-					}
-				})
+							if(res.statusCode == 401){
+								uni.reLaunch({
+									url: 'login'
+								});
+							}
+						})
 					} else {
 						console.log('验证失败');
 					}
@@ -184,8 +184,9 @@
 			//获取图片验证码
 			imgData(){
 				let _this = this
-				let images = 'http://192.168.18.101:8893/rest/store/captcha?uid='+_this.dateTime
+				let images = _this.$store.state.$baseUrl+'/rest/store/captcha?uid='+_this.dateTime+'&t='+new Date().getTime()
 				_this.model.img = images
+				
 			}
 		}
 	}

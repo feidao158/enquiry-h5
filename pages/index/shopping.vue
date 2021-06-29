@@ -116,23 +116,10 @@
 				</view>
 			</view>
 		</view>
-		
-		
-		<!-- <view class="top">
-			<checkbox-group @change="seletedStatus" checked>
-				<checkbox :value="item.value" @tap="radioList" v-for="(item,index) in items" :key="index" :checked="checkList.includes(String(item.value))">{{item.name}}</checkbox>
-			</checkbox-group>
-
-		</view>
-		<view class="bottom">
-			<checkbox :checked="seletedAll" @tap="_seletedAll">全选</checkbox>
-		</view> -->
 	</view>
 </template>
 
 <script>
-	// import * as math from "mathjs"
-	// import uniSwiperAction from '@/uview-ui/components/uni-s'
 	export default {
 		data() {
 			return {
@@ -189,26 +176,7 @@
 
 					// }
 				],
-				items: [{
-						value: 'USA',
-						name: '美国',
-						price: 5
-					},
-					{
-						value: 'CHN',
-						name: '中国',
-						price: 12
-					},
-					{
-						value: 'BRA',
-						name: '巴西',
-						price: 1
-					},
-					{
-						value: 'JPN',
-						name: '日本',
-						price: 10
-					}
+				items: [
 				],
 				checkList: [], //选中值
 				countPrice: 0

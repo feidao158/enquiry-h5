@@ -153,19 +153,6 @@
 			},
 			getMenuLiat(){
 				let _this = this
-				// _this.$u.get('chain-api/v1/ishop/info/order/query', {
-				// 	page:'1',
-				// 	size:'100'
-				// }).then(res => {
-				// 	console.log(res)
-				// 	if (res.code == 200) {
-				// 		_this.tabbar = res.data
-				// 	}else{
-				// 		_this.$refs.uToast.show({
-				// 			title: res.message
-				// 		})
-				// 	}
-				// })
 				_this.$u.get('stock-api/v1/ishop/material/list', {
 					
 				}).then(res => {
@@ -176,6 +163,12 @@
 						_this.$refs.uToast.show({
 							title: res.message
 						})
+					}
+				}).catch(res=>{
+					if(res.statusCode == 401){
+						uni.reLaunch({
+						    url: 'login'
+						});
 					}
 				})
 			},
