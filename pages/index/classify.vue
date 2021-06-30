@@ -30,8 +30,11 @@
 							<view class="thumb-box" @click="listData(index,index1)" v-for="(item1, index1) in item.materialList" :key="index1">
 								<view class="listdetil">
 									<view>{{item1.materialName}}</view>
-									<view>￥{{item1.clientRealPrice}}</view>
-									<view>{{item1.materialCode}}</view>
+									<!-- <view>￥{{item1.clientRealPrice}}</view>
+									<view>{{item1.materialCode}}</view> -->
+								</view>
+								<view class="">
+									<view>￥{{item1.clientRealPrice}}<text style="margin-left: 20px;">{{item1.materialCode}}</text></view>
 								</view>
 								
 							</view>
@@ -334,8 +337,8 @@
 		justify-content: center;
 		flex-direction: column;
 		// margin-top: 20rpx;
-		height: 40px;
-		line-height: 40px;
+		height: 68px;
+		line-height: 30px;
 		border-bottom: 1px solid #ebebeb;
 	}
 
