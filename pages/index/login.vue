@@ -67,12 +67,7 @@
 						required: true,
 						message: '请输入密码',
 						trigger: ['change', 'blur'],
-					}],
-					// code: [{
-					// 	required: true,
-					// 	message: '请输入密码',
-					// 	trigger: ['change', 'blur'],
-					// }],
+					}]
 				},
 				codeTips: '获取验证码',
 			}
