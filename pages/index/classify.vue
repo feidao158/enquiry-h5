@@ -33,8 +33,9 @@
 									<!-- <view>￥{{item1.clientRealPrice}}</view>
 									<view>{{item1.materialCode}}</view> -->
 								</view>
-								<view class="">
-									<view>￥{{item1.clientRealPrice}}<text style="margin-left: 20px;">{{item1.materialCode}}</text></view>
+								<view class="listdetil">
+									<view style="color: red;">￥{{item1.clientRealPrice}}</text></view>
+									<view>货号：{{item1.materialCode}}</view>
 								</view>
 								
 							</view>
