@@ -45,7 +45,7 @@
 			</u-cell-group>
 			<u-cell-group class="orderListParameter" style="position: fixed;bottom: 0px;">
 				<view class="listBtn">
-					<u-button @click="shoppingBtn" size="default" style="background: #ff0000;color: #FFFFFF;">加入购物车</u-button>
+					<u-button @click="shoppingBtn" size="default" style="background: #ff0000;color: #FFFFFF;">加入购物车<u-badge size="mini" type="info" :count="unmsp" style="top: -10px;right: -3px;padding: 5px;"></u-badge></u-button>
 					<u-button @click="purchaseBtn" style="margin-left: 1%;background: #68c8ef;color: #FFFFFF;" size="default">购买商品</u-button>
 				</view>
 			</u-cell-group>
@@ -90,6 +90,9 @@
 					num,
 					price
 				}
+			},
+			unmsp(){
+				return this.$store.state.shoppingNum
 			}
 		},
 		onLoad: function(option) { //option为object类型，会序列化上个页面传递的参数
@@ -97,12 +100,28 @@
 			// this.commodityList(option.id)
 			this.list = JSON.parse(option.id)
 			console.log(this.list)
+			this.shopNum()
 		},
 		methods:{
 			back() {
 				//返回
 				uni.navigateBack({
 					delta: 1
+				})
+			},
+			shopNum(){
+				let _this = this
+				_this.$u.get('stock-api/v1/ishop/store/shop_card/get', {
+					
+				}).then(res => {
+					console.log(res)
+					let numcount = 0
+					if (res.code == 200) {
+						for(var i=0;i<res.data.length;i++){
+							numcount += res.data[i].shopCardNumber
+						}
+						_this.$store.commit('shoppingNumInfo',numcount)
+					}
 				})
 			},
 			shoppingBtn(){
@@ -120,6 +139,11 @@
 						_this.$refs.uToast.show({
 							title: '加入购物车成功'
 						})
+						setTimeout(function(){
+							uni.switchTab({
+								url: 'shopping'
+							});
+						},1000)
 					}else{
 						_this.$refs.uToast.show({
 							title: res.message

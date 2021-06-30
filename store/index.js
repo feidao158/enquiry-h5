@@ -59,7 +59,8 @@ const store = new Vuex.Store({
 		],
 		addressInfo: {},
 		noticeInfo: {},
-		$baseUrl:'http://192.168.18.101:8893'//共俩地方用 loginPassword.vue和http.interceptor.js
+		$baseUrl:'http://47.240.7.200:8893',//共俩地方用 loginPassword.vue和http.interceptor.js
+		shoppingNum:0
 	},
 	mutations: {
 		$uStore(state, payload) {
@@ -90,6 +91,9 @@ const store = new Vuex.Store({
 		},
 		baseUrlInfo(state,payload) {
 			state.$baseUrl = payload
+		},
+		shoppingNumInfo(state,payload){
+			state.shoppingNum = payload
 		}
 	}
 })
