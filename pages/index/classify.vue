@@ -30,6 +30,7 @@
 							<view class="thumb-box" @click="listData(index,index1)" v-for="(item1, index1) in item.materialList" :key="index1">
 								<view class="listdetil">
 									<view>{{item1.materialName}}</view>
+									<view>￥{{item1.clientRealPrice}}</view>
 									<view>{{item1.materialCode}}</view>
 								</view>
 								
