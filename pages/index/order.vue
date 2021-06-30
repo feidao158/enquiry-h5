@@ -91,7 +91,7 @@
 									<text class="total-price">
 										<!-- ￥{{ priceInt(totalPrice(res.goodsList)) }}.
 										<text class="decimal">{{ priceDecimal(totalPrice(res.goodsList)) }}</text> -->
-										￥{{res.inputName}}.
+										￥{{res.inputName}}
 										<text class="decimal">{{res.orderTotalPrice}}</text>
 									</text>
 								</view>
