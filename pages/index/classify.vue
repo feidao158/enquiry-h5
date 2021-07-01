@@ -211,10 +211,13 @@
 			},
 			listData(index,index1){
 				let _this = this
+				
+				this.$store.commit('updateMaterialInfo',_this.tabbar[index].materialList[index1])
+				
 				//详情
 				uni.navigateTo({
 					// url: './classifyList?id='+_this.list[index].key
-					url:'./detailsPage?id='+JSON.stringify(_this.tabbar[index].materialList[index1])
+					url:'./detailsPage'
 				});
 			}
 		}
