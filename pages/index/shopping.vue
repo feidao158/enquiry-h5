@@ -186,6 +186,8 @@
 			this.shoppingListData()
 		},
 		onLoad() {
+			
+			uni.setTabBarBadge({ index: 2, text: '5' })
 			// math.add	(22, 2)
 			// console.log(this.$math.multiply(2,4))
 		},
@@ -443,8 +445,9 @@
 			},
 			goShopping(){
 				//去购物
-				uni.navigateTo({
-					url: 'classifyList'
+				
+				uni.switchTab({
+					url: '/pages/index/classify'
 				});
 			},
 			confirmOrderPageList(){
