@@ -41,6 +41,36 @@ import VueI18n from '@/common/vue-i18n.min.js';
 // VueI18n
 Vue.use(VueI18n);
 
+Vue.prototype.$updateCartNumber = function() {
+	uni.request({
+		header:{
+			'authorization':uni.getStorageSync('token')
+		},
+		url: "http://47.240.7.200:8893/store-api/v1/store/shop_card/number",
+		method: "GET",
+		success(res) {
+			if (res.data.code == 200) {
+				if (res.data.data > 0) {
+					uni.setTabBarBadge({
+						index: 2,
+						text: res.data.data + ""
+					})
+				}else{
+					uni.removeTabBarBadge({index: 2,})
+				}
+			}
+		}
+	})
+	// this.$u.get('/store-api/v1/store/shop_card/number').then((res)=>{
+	// 	console.log(res)
+	// 	if(res.code==200){
+	// 		if(res.data>0){
+	// 			uni.setTabBarBadge({ index: 2, text: res.data+"" })
+	// 		}
+	// 	}
+	// })
+}
+
 const i18n = new VueI18n({
 	// 默认语言
 	locale: 'zh',

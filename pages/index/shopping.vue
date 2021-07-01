@@ -187,7 +187,7 @@
 		},
 		onLoad() {
 			
-			uni.setTabBarBadge({ index: 2, text: '5' })
+			
 			// math.add	(22, 2)
 			// console.log(this.$math.multiply(2,4))
 		},
@@ -307,7 +307,7 @@
 					shopCardDetailDTOList
 				}).then(res => {
 					if (res.code == 200) {
-						
+						this.$updateCartNumber()
 					}else{
 						this.$refs.uToast.show({
 							title: res.message
@@ -333,6 +333,7 @@
 							_this.$refs.uToast.show({
 								title: '删除成功'
 							})
+							this.$updateCartNumber()
 							_this.shoppingListData()
 						}else{
 							_this.$refs.uToast.show({
@@ -358,7 +359,7 @@
 					shopCardDetailDTOList
 				}).then(res => {
 					if (res.code == 200) {
-						
+						this.$updateCartNumber()
 					}else{
 						this.$refs.uToast.show({
 							title: res.message

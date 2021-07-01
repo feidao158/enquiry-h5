@@ -25,6 +25,11 @@
 					<u-button slot="right" type="success" size="mini" @click="getCode">{{codeTips}}</u-button>
 				</u-form-item> -->
 				<view class="" style="width: 100%;height: 80rpx;margin-top: 20rpx;">
+				<checkbox-group @change="checkChange">
+					<checkbox value="1" :checked="isKeep">记住密码</checkbox>
+				</checkbox-group>
+				</view>
+				<view class="" style="width: 100%;height: 80rpx;margin-top: 20rpx;">
 					<view style="float: right;color: #029789;" @click="passwordPage">忘记密码?</view>
 				</view>
 				<view>
@@ -70,12 +75,30 @@
 					}]
 				},
 				codeTips: '获取验证码',
+				isKeep:false,
+			}
+		},
+		onLoad() {
+			if(uni.getStorageSync("is_keep")!==""){
+				this.isKeep=uni.getStorageSync("is_keep")
+			}
+			if(uni.getStorageSync("is_keep")){
+				this.model.name=uni.getStorageSync('login_account')
+				this.model.password=uni.getStorageSync('login_password')
 			}
 		},
 		onReady() {
 			this.$refs.uForm.setRules(this.rules);
 		},
 		methods: {
+			checkChange(e){
+				if(e.detail.value.length!=0){
+					this.isKeep=true;
+				}else{
+					this.isKeep=false;
+				}
+				console.log(e)
+			},
 			submit() {
 				let _this = this
 				_this.$refs.uForm.validate(valid => {
@@ -90,6 +113,15 @@
 							if (res.flag == 1) {
 								console.log(res);
 								uni.setStorageSync('token',res.data.token);
+								if(_this.isKeep){
+									uni.setStorageSync('login_account',_this.model.name);
+									uni.setStorageSync('login_password',_this.model.password);
+									uni.setStorageSync('is_keep',_this.isKeep);
+								}else{
+									uni.removeStorageSync('login_account');
+									uni.removeStorageSync('login_password');
+									uni.removeStorageSync('is_keep');
+								}
 								_this.$refs.uToast.show({
 									title: res.message
 								})

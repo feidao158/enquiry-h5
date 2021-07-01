@@ -90,6 +90,11 @@
 					<image slot="icon" class="u-cell-icon" src="../../static/uview/example/basicsIcon.png" mode="widthFix"></image>
 				</u-cell-item>
 			</u-cell-group>
+			<u-cell-group>
+				<u-cell-item title="退出登录" @click='logout'>
+					<image slot="icon" class="u-cell-icon" src="../../static/uview/example/logout.png" mode="widthFix"></image>
+				</u-cell-item>
+			</u-cell-group>
 		</view>
 	</view>
 </template>
@@ -282,6 +287,22 @@
 						_this.orderTitleList.shipped = res.data
 					}else{
 						
+					}
+				})
+			},
+			/**
+			 * 退出登录
+			 */
+			logout(){
+				uni.showModal({
+					title:"确定退出登录？",
+					success(res) {
+						if(res.confirm){
+							uni.removeStorageSync('token');
+							uni.navigateTo({
+								url:"./login"
+							})
+						}
 					}
 				})
 			}

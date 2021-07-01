@@ -72,6 +72,9 @@
 		onLoad() {
 			
 		},
+		onShow() {
+			this.$updateCartNumber()
+		},
 		onReady() {
 			this.getMenuLiat()
 			this.getMenuItemTop()

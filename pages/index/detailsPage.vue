@@ -140,6 +140,7 @@
 				}).then(res => {
 					console.log(res)
 					if (res.code == 200) {
+						_this.$updateCartNumber()
 						_this.$refs.uToast.show({
 							title: '加入购物车成功'
 						})
